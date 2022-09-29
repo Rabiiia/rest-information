@@ -8,6 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "address")
+@NamedQuery(name = "Address.deleteAllRows", query = "DELETE from Address")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,13 +20,22 @@ public class Address {
     @Column(name = "street", nullable = false, length = 45)
     private String street;
 
-    @Size(max = 45)
-    @NotNull
-    @Column(name = "zipcode", nullable = false, length = 45)
-    private String zipcode;
+
 
     @OneToMany(mappedBy = "address")
     private Set<Person> people = new LinkedHashSet<>();
+
+    @NotNull
+    @Column(name = "zipcode", nullable = false)
+    private Integer zipcode;
+
+
+
+
+    public Address(String street, Integer zipcode) {
+        this.street = street;
+        this.zipcode = zipcode;
+    }
 
     public Integer getId() {
         return id;
@@ -43,13 +53,6 @@ public class Address {
         this.street = street;
     }
 
-    public String getZipcode() {
-        return zipcode;
-    }
-
-    public void setZipcode(String zipcode) {
-        this.zipcode = zipcode;
-    }
 
     public Set<Person> getPeople() {
         return people;
@@ -57,6 +60,14 @@ public class Address {
 
     public void setPeople(Set<Person> people) {
         this.people = people;
+    }
+
+    public Integer getZipcode() {
+        return zipcode;
+    }
+
+    public void setZipcode(Integer zipcode) {
+        this.zipcode = zipcode;
     }
 
 }

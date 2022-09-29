@@ -40,6 +40,9 @@ public class Hobby {
             inverseJoinColumns = @JoinColumn(name = "person_id"))
     private Set<Person> people = new LinkedHashSet<>();
 
+    public Hobby() {
+    }
+
     public Integer getId() {
         return id;
     }

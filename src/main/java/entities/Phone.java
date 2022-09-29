@@ -6,6 +6,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "phone")
+@NamedQuery(name = "Phone.deleteAllRows", query = "DELETE from Phone")
 public class Phone {
     @Id
     @Column(name = "number", nullable = false)
@@ -19,6 +20,10 @@ public class Phone {
     @Size(max = 45)
     @Column(name = "description", length = 45)
     private String description;
+
+
+    public Phone() {
+    }
 
     public Integer getId() {
         return id;
