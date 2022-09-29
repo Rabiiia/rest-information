@@ -66,4 +66,11 @@ class PersonFacadeTest {
     public void testCreatePerson() throws Exception {
 
     }
+
+    @Test
+    public void testEditPerson() throws Exception {
+
+    }
+
+
 }
