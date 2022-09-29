@@ -20,7 +20,8 @@ public class Address {
     @Column(name = "street", nullable = false, length = 45)
     private String street;
 
-
+    public Address() {
+    }
 
     @OneToMany(mappedBy = "address")
     private Set<Person> people = new LinkedHashSet<>();
