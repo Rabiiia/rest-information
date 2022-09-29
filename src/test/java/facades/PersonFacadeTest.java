@@ -1,6 +1,7 @@
 package facades;
 
 import entities.Address;
+import entities.Hobby;
 import entities.Person;
 import entities.Phone;
 import org.junit.jupiter.api.*;
@@ -18,6 +19,7 @@ class PersonFacadeTest {
     private Address a1, a2;
     private Person p1, p2, p3, p4;
     private Phone n1, n2, n3, n4;
+    private Hobby h1, h2, h3, h4;
 
     public PersonFacadeTest() {
     }
@@ -30,7 +32,7 @@ class PersonFacadeTest {
 
     @AfterAll
     public static void tearDownClass() {
-//        Clean up database after test is done or use a persistence unit with drop-and-create to start up clean on every test
+        // Clean up database after test is done or use a persistence unit with drop-and-create to start up clean on every test
     }
 
     @BeforeEach
@@ -65,11 +67,19 @@ class PersonFacadeTest {
             em.persist(n2);
             em.persist(n3);
             em.persist(n4);
+            // Create and persist hobbies
+            h1 = new Hobby("Musik");
+            h2 = new Hobby("Fuglekiggeri");
+            h3 = new Hobby("Søvn");
+            h4 = new Hobby("Squash");
+            em.persist(n1);
+            em.persist(n2);
+            em.persist(n3);
+            em.persist(n4);
             em.getTransaction().commit();
         } finally {
             em.close();
         }
-        assertEquals(1, 1);
     }
 
     @AfterEach
@@ -84,4 +94,5 @@ class PersonFacadeTest {
     public void testEditPerson() throws Exception {
 
     }
+
 }
