@@ -43,6 +43,10 @@ public class Hobby {
     public Hobby() {
     }
 
+    public Hobby(String name) {
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }
