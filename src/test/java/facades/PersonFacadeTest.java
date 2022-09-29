@@ -3,7 +3,6 @@ package facades;
 import entities.Address;
 import entities.Person;
 import entities.Phone;
-import entities.RenameMe;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 
@@ -12,15 +11,13 @@ import javax.persistence.EntityManagerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
 class PersonFacadeTest {
-
-
     private static EntityManagerFactory emf;
     private static PersonFacade facade;
 
-    Person p1,p2;
-    Address a1,a2;
+    Address a1, a2;
+    Person p1, p2, p3, p4;
+    Phone n1, n2, n3, n4;
 
     public PersonFacadeTest() {
     }
@@ -36,23 +33,38 @@ class PersonFacadeTest {
 //        Clean up database after test is done or use a persistence unit with drop-and-create to start up clean on every test
     }
 
-
     @BeforeEach
     void setUp() {
         EntityManager em = emf.createEntityManager();
+        // Populate the test database
         try {
             em.getTransaction().begin();
+            // Delete all if any rows
             em.createNamedQuery("Person.deleteAllRows").executeUpdate();
             em.createNamedQuery("Address.deleteAllRows").executeUpdate();
-            //em.createNamedQuery("Parent.deleteAllRows").executeUpdate();
-            a1 = new Address("Falkonner alle", 2800);
+            // Create and persist addresses
+            a1 = new Address("Falkonner Alle", 2800);
             a2 = new Address("Nørregaard", 3500);
             em.persist(a1);
             em.persist(a2);
-            p1 = new Person("TestFirstName","TestLastName", "TestEmail", a1);
-            p2 = new Person("TestFirstName2", "TestLastName2","TestEmail2", a2);
+            // Create and persist persons (using the above addresses)
+            p1 = new Person("Mathias","LastName1", "Email1", a1);
+            p2 = new Person("Martin", "LastName2","Email2", a1);
+            p3 = new Person("Rabia", "LastName3","Email3", a2);
+            p4 = new Person("Zack", "LastName4","Email4", a2);
             em.persist(p1);
             em.persist(p2);
+            em.persist(p3);
+            em.persist(p4);
+            // Create and persist phones (using the above persons)
+            n1 = new Phone(12345678, p1);
+            n2 = new Phone(23456789, p2);
+            n3 = new Phone(34567890, p3);
+            n4 = new Phone(45678901, p4);
+            em.persist(n1);
+            em.persist(n2);
+            em.persist(n3);
+            em.persist(n4);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -65,7 +77,6 @@ class PersonFacadeTest {
 
     @Test
     public void testCreatePerson() throws Exception {
-
     }
 
     @Test
