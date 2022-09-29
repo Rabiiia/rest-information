@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class Phone {
     @Id
     @Column(name = "number", nullable = false)
-    private Integer id;
+    private Integer number;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -25,12 +25,17 @@ public class Phone {
     public Phone() {
     }
 
-    public Integer getId() {
-        return id;
+    public Phone(int number, Person person) {
+        this.number = number;
+        this.person = person;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer id) {
+        this.number = id;
     }
 
     public Person getPerson() {
