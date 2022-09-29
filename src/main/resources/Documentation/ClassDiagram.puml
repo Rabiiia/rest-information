@@ -1,0 +1,141 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+
+package "BigPackage" #CCCCCC {
+    package "DTOs" #DDDDDD {
+        class PersonDTO{
+            - int id
+            - String email
+            - String firstName
+            - String lastName
+            - List PhoneDTO phones
+            - List HobbyDTO hobbies
+            - List ClubDTO clubs
+            - String street
+            - int zipCode
+        }
+
+        class PhoneDTO{
+            - int number
+            - int personId
+            - String description
+        }
+
+        class ClubDTO{
+            - int id
+            - String name
+            - List Person persons
+            - List Hobby hobbies
+            - int maxMembers
+            - int memberCount
+        }
+
+        class HobbyDTO{
+            - int id
+            - List Person persons
+            - String name
+            - String description
+        }
+
+        class PersonHobbyDTO{
+            -int personId
+            -int hobbyId
+        }
+
+        class PersonClubDTO{
+            -int personId
+            -int clubId
+        }
+
+        class HobbyClubDTO{
+            -int hobbyId
+            -int clubId
+        }
+
+        PersonDTO *- PhoneDTO
+
+    }
+
+    "Facades" ..> "Entities" : "Imports"
+    "DTOs" <... "Facades" : "Imports"
+
+    package "Facades" #DDDDDD {
+        class PersonFacade{
+            +getPersonByPhone()
+            +getPersonsByHobby()
+            +getPersonsByCity()
+            +createPerson()
+            +editPerson()
+
+        }
+
+        class HobbyFacade{
+            +countPersons()
+        }
+
+        class ClubFacade{
+        }
+
+        class AddressFacade{
+            +getAllZipcodes()
+            +deleteAddress()
+        }
+
+    }
+
+    package "Entities" #DDDDDD{
+
+        class Person{
+            - int id
+            - List Phone phones
+            - List Hobby hobbies
+            - String email
+            - String firstName
+            - String lastName
+            - Address address
+        }
+        class Hobby{
+            - int id
+            - List Person persons
+            - String name
+            - String description
+        }
+        class Phone{
+            - Person person
+            - int number
+            - String description
+        }
+        class Address{
+            - List Person persons
+            - String street
+            - CityInfo cityInfo
+
+        }
+        class CityInfo{
+            - int zipCode
+            - String city
+        }
+        class Club{
+            - int id
+            - String name
+            - List int persons
+            - List int hobbies
+            - int maxMembers
+        }
+
+        class Equipment{
+            - String equipment
+            - String description
+        }
+    Phone "*" --* "1" Person
+    Hobby "*" - "*" Person
+    Person "*" *- "1" Address
+    Address "*" *- "1" CityInfo
+    Person "*" -- "*" Club
+    Hobby "*" -- "*" Club
+    Equipment "*" -* "*" Hobby
+    }
+}
+@enduml
