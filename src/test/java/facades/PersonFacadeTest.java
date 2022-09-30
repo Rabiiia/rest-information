@@ -101,15 +101,7 @@ class PersonFacadeTest {
         PersonDTO pdto = new PersonDTO("Bertram", "Jensen", "bertramjensen@hotmail.dk", address, phones);
         // Construct entity from DTOs
         Person person = new Person(pdto);
-
-        //Person person = new Person("Bertram", "Jensen", "bertramjensen@hotmail.dk");
-        //Address address = new Address("Nybrovej", 2800);
-        //Phone phone1 = new Phone(87654321, "Mobile");
-        //Phone phone2 = new Phone(76543210, "Mobile");
-        //person.setAddress(address);
-        //person.getPhones().add(phone1);
-        //person.getPhones().add(phone2);
-
+        // Persist person
         FACADE.createPerson(person);
     }
 
