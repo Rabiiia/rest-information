@@ -1,5 +1,7 @@
 package entities;
 
+import dtos.PhoneDTO;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -25,8 +27,14 @@ public class Phone {
     public Phone() {
     }
 
-    public Phone(int number, Person person) {
+    public Phone(PhoneDTO phdto) {
+        this.number = phdto.getNumber();
+        this.description = phdto.getDescription();
+    }
+
+    public Phone(int number, String description, Person person) {
         this.number = number;
+        this.description = description;
         this.person = person;
     }
 

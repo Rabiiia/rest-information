@@ -1,5 +1,8 @@
 package entities;
 
+import dtos.PersonDTO;
+import dtos.PhoneDTO;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -45,6 +48,15 @@ public class Person {
     private Set<Hobby> hobbies = new LinkedHashSet<>();
 
     public Person() {
+    }
+
+    public Person(PersonDTO pdto) {
+        this.firstName = pdto.getFirstName();
+        this.lastName = pdto.getLastName();
+        this.email = pdto.getEmail();
+        this.address = new Address(pdto.getAddress());
+        for (PhoneDTO phdto : pdto.getPhones())
+            this.phones.add(new Phone(phdto));
     }
 
     public Person(String firstName, String lastName, String email, Address address) {

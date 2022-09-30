@@ -1,5 +1,7 @@
 package entities;
 
+import dtos.AddressDTO;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -21,6 +23,11 @@ public class Address {
     private String street;
 
     public Address() {
+    }
+
+    public Address(AddressDTO adto) {
+        this.street = adto.getStreet();
+        this.zipcode = adto.getZipcode();
     }
 
     @OneToMany(mappedBy = "address")
