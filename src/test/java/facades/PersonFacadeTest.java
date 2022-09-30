@@ -1,5 +1,8 @@
 package facades;
 
+import dtos.AddressDTO;
+import dtos.PersonDTO;
+import dtos.PhoneDTO;
 import entities.Address;
 import entities.Hobby;
 import entities.Person;
@@ -10,11 +13,15 @@ import utils.EMF_Creator;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PersonFacadeTest {
-    private static EntityManagerFactory EMF;
-    private static PersonFacade FACADE;
+    private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactoryForTest();
+    private static final PersonFacade FACADE = PersonFacade.getInstance(EMF);
 
     private Address a1, a2;
     private Person p1, p2, p3, p4;
@@ -26,8 +33,6 @@ class PersonFacadeTest {
 
     @BeforeAll
     public static void setUpClass() {
-        EMF = EMF_Creator.createEntityManagerFactoryForTest();
-        FACADE = PersonFacade.getInstance(EMF);
     }
 
     @AfterAll
@@ -59,10 +64,10 @@ class PersonFacadeTest {
             em.persist(p3);
             em.persist(p4);
             // Create and persist phones (using the above persons)
-            n1 = new Phone(12345678, p1);
-            n2 = new Phone(23456789, p2);
-            n3 = new Phone(34567890, p3);
-            n4 = new Phone(45678901, p4);
+            n1 = new Phone(12345678, "Mobile", p1);
+            n2 = new Phone(23456789, "Mobile", p2);
+            n3 = new Phone(34567890, "Mobile", p3);
+            n4 = new Phone(45678901, "Mobile", p4);
             em.persist(n1);
             em.persist(n2);
             em.persist(n3);
@@ -88,6 +93,24 @@ class PersonFacadeTest {
 
     @Test
     public void testCreatePerson() throws Exception {
+        // Get DTOs from form
+        AddressDTO address = new AddressDTO("Nybrovej", 2800);
+        Set<PhoneDTO> phones = new LinkedHashSet<>();
+        phones.add(new PhoneDTO(87654321, "Mobile"));
+        phones.add(new PhoneDTO(76543210, "Home"));
+        PersonDTO pdto = new PersonDTO("Bertram", "Jensen", "bertramjensen@hotmail.dk", address, phones);
+        // Construct entity from DTOs
+        Person person = new Person(pdto);
+
+        //Person person = new Person("Bertram", "Jensen", "bertramjensen@hotmail.dk");
+        //Address address = new Address("Nybrovej", 2800);
+        //Phone phone1 = new Phone(87654321, "Mobile");
+        //Phone phone2 = new Phone(76543210, "Mobile");
+        //person.setAddress(address);
+        //person.getPhones().add(phone1);
+        //person.getPhones().add(phone2);
+
+        FACADE.createPerson(person);
     }
 
     @Test
