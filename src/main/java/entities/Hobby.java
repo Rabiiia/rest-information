@@ -21,7 +21,7 @@ public class Hobby {
 
     @Size(max = 255)
     @NotNull
-    @Column(name = "wikiLink", nullable = false)
+    @Column(name = "wiki_link", nullable = false)
     private String wikiLink;
 
     @Size(max = 255)
@@ -43,8 +43,11 @@ public class Hobby {
     public Hobby() {
     }
 
-    public Hobby(String name) {
+    public Hobby(String category, String name ,String type, String wikiLink) {
+        this.category = category;
         this.name = name;
+        this.type = type;
+        this.wikiLink = wikiLink;
     }
 
     public Integer getId() {

@@ -68,14 +68,14 @@ class PersonFacadeTest {
             em.persist(n3);
             em.persist(n4);
             // Create and persist hobbies
-            h1 = new Hobby("Musik");
-            h2 = new Hobby("Fuglekiggeri");
-            h3 = new Hobby("Søvn");
-            h4 = new Hobby("Squash");
-            em.persist(n1);
-            em.persist(n2);
-            em.persist(n3);
-            em.persist(n4);
+            h1 = new Hobby("", "Musik", "", "");
+            h2 = new Hobby("", "Fuglekiggeri", "", "");
+            h3 = new Hobby("", "Søvn", "", "");
+            h4 = new Hobby("", "Squash", "", "");
+            em.persist(h1);
+            em.persist(h2);
+            em.persist(h3);
+            em.persist(h4);
             em.getTransaction().commit();
         } finally {
             em.close();
