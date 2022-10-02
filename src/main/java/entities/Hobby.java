@@ -95,8 +95,8 @@ public class Hobby {
         return persons;
     }
 
-    public void setPersons(Set<Person> people) {
-        this.persons = people;
+    public void setPersons(Set<Person> persons) {
+        this.persons = persons;
     }
 
 }
