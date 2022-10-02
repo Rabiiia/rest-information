@@ -1,6 +1,7 @@
 package dtos;
 
 import entities.Address;
+import entities.Person;
 import entities.Phone;
 
 import javax.persistence.*;
@@ -20,12 +21,25 @@ public class PersonDTO {
     public PersonDTO() {
     }
 
-    public PersonDTO(String firstName, String lastName, String email, AddressDTO address, Set<PhoneDTO> phones) {
+    // For mocking up a DTO
+    public PersonDTO(String firstName, String lastName, String email, Set<PhoneDTO> phones, AddressDTO address) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.address = address;
         this.phones = phones;
+        this.address = address;
+    }
+
+    // For converting an entity into a DTO
+    public PersonDTO(Person person) {
+        if (person.getId() != null)
+            this.id = person.getId();
+        this.firstName = person.getFirstName();
+        this.lastName = person.getLastName();
+        this.email = person.getEmail();
+        this.address = new AddressDTO(person.getAddress());
+        for (Phone phone : person.getPhones())
+            this.phones.add(new PhoneDTO(phone));
     }
 
     public int getId() {
@@ -75,4 +89,5 @@ public class PersonDTO {
     public void setPhones(Set<PhoneDTO> phones) {
         this.phones = phones;
     }
+
 }

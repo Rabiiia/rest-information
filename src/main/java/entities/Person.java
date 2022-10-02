@@ -50,6 +50,15 @@ public class Person {
     public Person() {
     }
 
+    // For mocking up an entity
+    public Person(String firstName, String lastName, String email, Address address) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.address = address;
+    }
+
+    // For converting a DTO into an entity
     public Person(PersonDTO pdto) {
         this.firstName = pdto.getFirstName();
         this.lastName = pdto.getLastName();
@@ -57,13 +66,6 @@ public class Person {
         this.address = new Address(pdto.getAddress());
         for (PhoneDTO phdto : pdto.getPhones())
             this.phones.add(new Phone(phdto));
-    }
-
-    public Person(String firstName, String lastName, String email, Address address) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.address = address;
     }
 
     public Integer getId() {
