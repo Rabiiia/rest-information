@@ -5,14 +5,12 @@
  */
 package utils;
 
-import dtos.RenameMeDTO;
 import java.util.Properties;
 import java.util.Set;
 import com.google.gson.*;
+import dtos.PersonDTO;
+
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -22,33 +20,49 @@ public class Utility {
     private static Gson gson = new GsonBuilder().create();
     
     public static void printAllProperties() {
-            Properties prop = System.getProperties();
-            Set<Object> keySet = prop.keySet();
-            for (Object obj : keySet) {
-                    System.out.println("System Property: {" 
-                                    + obj.toString() + "," 
-                                    + System.getProperty(obj.toString()) + "}");
-            }
+        Properties prop = System.getProperties();
+        Set<Object> keySet = prop.keySet();
+        for (Object obj : keySet) {
+            System.out.println("System Property: {"
+                    + obj.toString() + ","
+                    + System.getProperty(obj.toString()) + "}");
+        }
     }
     
-    public static RenameMeDTO json2DTO(String json) throws UnsupportedEncodingException{
-            return gson.fromJson(new String(json.getBytes("UTF8")), RenameMeDTO.class);
+    public static PersonDTO jsonToDto(String json) throws UnsupportedEncodingException{
+        return gson.fromJson(new String(json.getBytes("UTF8")), PersonDTO.class);
     }
     
-    public static String DTO2json(RenameMeDTO rmDTO){
-        return gson.toJson(rmDTO, RenameMeDTO.class);
+    public static String DtoToJson(PersonDTO rmDTO){
+        return gson.toJson(rmDTO, PersonDTO.class);
     }
     
     public static void main(String[] args) throws UnsupportedEncodingException {
-//        printAllProperties();
+        // printAllProperties();
         
-        //Test json2DTO and back again
-        String str2 = "{'id':1, 'str1':'Dette er den første tekst', 'str2':'Her er den ANDEN'}";
-        RenameMeDTO rmDTO = json2DTO(str2);
-        System.out.println(rmDTO);
-        
-        String backAgain = DTO2json(rmDTO);
-        System.out.println(backAgain);
+        // Test jsonToDto and DtoToJson
+        String json = "{" +
+                "'id':1," +
+                "'firstName':'Fornavn'," +
+                "'lastName':'Efternavn'" +
+                "'email':'eksempel@mail.dk'" +
+                "'phones':[" +
+                "{" +
+                "'number':'12345678'," +
+                "'description':'Mobile'," +
+                "}" +
+                "]" +
+                "'address':{" +
+                "'street':'Nørgaardsvej 30'," +
+                "'zipcode':'2800'," +
+                "'city':'Kongens Lyngby'," +
+                "}" +
+                "}";
+        PersonDTO pdto = jsonToDto(json);
+        System.out.println(pdto);
+
+        String jsonFromDto = DtoToJson(pdto);
+        System.out.println(jsonFromDto);
     }
 
 }

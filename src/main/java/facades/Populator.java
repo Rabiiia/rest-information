@@ -5,10 +5,15 @@
  */
 package facades;
 
-import dtos.RenameMeDTO;
-import entities.RenameMe;
 import javax.persistence.EntityManagerFactory;
+
+import dtos.AddressDTO;
+import dtos.PersonDTO;
+import dtos.PhoneDTO;
 import utils.EMF_Creator;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  *
@@ -17,13 +22,19 @@ import utils.EMF_Creator;
 public class Populator {
     public static void populate(){
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
-        FacadeExample fe = FacadeExample.getFacadeExample(emf);
-        fe.create(new RenameMeDTO(new RenameMe("First 1", "Last 1")));
-        fe.create(new RenameMeDTO(new RenameMe("First 2", "Last 2")));
-        fe.create(new RenameMeDTO(new RenameMe("First 3", "Last 3")));
+        PersonFacade facade = PersonFacade.getInstance(emf);
+        // Mock up DTOs
+        AddressDTO address = new AddressDTO("Nørgaardsvej 30", 2800);
+        Set<PhoneDTO> phones = new LinkedHashSet<>();
+        phones.add(new PhoneDTO(87654321, "Home"));
+        phones.add(new PhoneDTO(76543210, "Mobile"));
+        PersonDTO pdto = new PersonDTO("Thomas", "Hartmann", "tha@cphbusiness.dk", phones, address);
+        // Persist person
+        facade.createPerson(pdto);
     }
     
     public static void main(String[] args) {
         populate();
     }
+
 }
