@@ -16,34 +16,35 @@ public class Hobby {
 
     @Size(max = 255)
     @NotNull
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    @Size(max = 255)
-    @NotNull
-    @Column(name = "wiki_link", nullable = false)
-    private String wikiLink;
-
-    @Size(max = 255)
-    @NotNull
     @Column(name = "category", nullable = false)
     private String category;
+
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Size(max = 255)
     @NotNull
     @Column(name = "type", nullable = false)
     private String type;
 
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "wiki_link", nullable = false)
+    private String wikiLink;
+
     @ManyToMany
     @JoinTable(name = "hobby_person",
             joinColumns = @JoinColumn(name = "hobby_id"),
             inverseJoinColumns = @JoinColumn(name = "person_id"))
-    private Set<Person> people = new LinkedHashSet<>();
+    private Set<Person> persons = new LinkedHashSet<>();
 
     public Hobby() {
     }
 
-    public Hobby(String category, String name ,String type, String wikiLink) {
+    // For mocking up an entity
+    public Hobby(String category, String name, String type, String wikiLink) {
         this.category = category;
         this.name = name;
         this.type = type;
@@ -58,28 +59,20 @@ public class Hobby {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getWikiLink() {
-        return wikiLink;
-    }
-
-    public void setWikiLink(String wikiLink) {
-        this.wikiLink = wikiLink;
-    }
-
     public String getCategory() {
         return category;
     }
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getType() {
@@ -90,12 +83,20 @@ public class Hobby {
         this.type = type;
     }
 
-    public Set<Person> getPeople() {
-        return people;
+    public String getWikiLink() {
+        return wikiLink;
     }
 
-    public void setPeople(Set<Person> people) {
-        this.people = people;
+    public void setWikiLink(String wikiLink) {
+        this.wikiLink = wikiLink;
+    }
+
+    public Set<Person> getPersons() {
+        return persons;
+    }
+
+    public void setPersons(Set<Person> people) {
+        this.persons = people;
     }
 
 }
