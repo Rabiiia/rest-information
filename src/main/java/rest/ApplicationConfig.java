@@ -5,7 +5,6 @@ import javax.ws.rs.core.Application;
 
 @javax.ws.rs.ApplicationPath("api")
 public class ApplicationConfig extends Application {
-
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
@@ -21,10 +20,11 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(errorhandling.GenericExceptionMapper.class);
+        resources.add(errorhandling.EntityNotFoundExceptionMapper.class);
+        resources.add(errorhandling.EntityFoundExceptionMapper.class);
+        resources.add(errorhandling.InternalErrorExceptionMapper.class);
         resources.add(org.glassfish.jersey.server.wadl.internal.WadlResource.class);
         resources.add(rest.PersonResource.class);
-        resources.add(errorhandling.EntityNotFoundExceptionMapper.class);
-        resources.add(errorhandling.InternalErrorException.class);
     }
-    
+
 }

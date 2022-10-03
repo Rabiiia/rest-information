@@ -14,18 +14,20 @@ import java.util.logging.Logger;
 
 @Provider
 public class EntityNotFoundExceptionMapper implements ExceptionMapper<EntityNotFoundException> {
-    static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    static final int CODE = 404;
+
     @Context
     ServletContext context;
 
     @Override
-    public Response toResponse(EntityNotFoundException ex) {
-        Logger.getLogger(EntityNotFoundExceptionMapper.class.getName()).log(Level.SEVERE, null, ex);
-        ExceptionDTO err = new ExceptionDTO(404, ex.getMessage());
+    public Response toResponse(EntityNotFoundException e) {
+        Logger.getLogger(EntityNotFoundExceptionMapper.class.getName()).log(Level.SEVERE, null, e);
+        ExceptionDTO err = new ExceptionDTO(CODE, e.getMessage());
 
-        return Response.status(404)
-                .entity(gson.toJson(err))
-                .type(MediaType.APPLICATION_JSON).
-                build();
+        return Response.status(CODE)
+                .entity(GSON.toJson(err))
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 }
