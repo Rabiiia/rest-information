@@ -22,25 +22,16 @@ class PersonFacadeTest {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactoryForTest();
     private static final PersonFacade FACADE = PersonFacade.getInstance(EMF);
 
-    private Address a1, a2;
-    private Person p1, p2, p3, p4;
-    private Phone n1, n2, n3, n4;
-    private Hobby h1, h2, h3, h4;
+    private static Address a1, a2;
+    private static Person p1, p2, p3, p4;
+    private static Phone n1, n2, n3, n4;
+    private static Hobby h1, h2, h3, h4;
 
     public PersonFacadeTest() {
     }
 
     @BeforeAll
     public static void setUpClass() {
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-        // Clean up database after test is done or use a persistence unit with drop-and-create to start up clean on every test
-    }
-
-    @BeforeEach
-    void setUp() {
         EntityManager em = EMF.createEntityManager();
         // Populate the database
         try {
@@ -88,6 +79,29 @@ class PersonFacadeTest {
         } finally {
             em.close();
         }
+    }
+
+    @AfterAll
+    public static void tearDownClass() {
+        //EntityManager em = EMF.createEntityManager();
+        // Clean up database after test is done or use a persistence unit with drop-and-create to start up clean on every test
+        /*try {
+            // Begin new transaction
+            em.getTransaction().begin();
+            // Delete all rows if any exists
+            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+            // Commit transaction
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }*/
+    }
+
+    @BeforeEach
+    void setUp() {
     }
 
     @AfterEach
