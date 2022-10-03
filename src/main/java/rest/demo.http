@@ -6,3 +6,9 @@ Content-Type: application/json
 #User-Agent: Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion
 
 {"str1": "First Property", "str2": "Second Property"}
+
+###
+PUT http://localhost:8080/information/api/person/1
+Content-Type: application/json
+
+{"firstName": "Updated", "lastName": "Updated2", "email": "updated@updated.dk"}

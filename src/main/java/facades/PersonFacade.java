@@ -124,6 +124,7 @@ public class PersonFacade {
 
         try{
             Person oldPerson = em.find(Person.class,personDTO.getId());
+           // Address newAddress = em.find(Address)
 
             if(oldPerson == null){
                 throw new EntityNotFoundException("Could not find a person with the provided id " + personDTO.getId());
@@ -132,6 +133,8 @@ public class PersonFacade {
             oldPerson.setFirstName(personDTO.getFirstName());
             oldPerson.setLastName(personDTO.getLastName());
             oldPerson.setEmail(personDTO.getEmail());
+            //if(personDTO.getAddress() =! null)
+            //oldPerson.setAddress();
 
 
             em.getTransaction().begin();
