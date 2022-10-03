@@ -17,7 +17,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PersonFacadeTest {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactoryForTest();
@@ -43,18 +42,21 @@ class PersonFacadeTest {
     @BeforeEach
     void setUp() {
         EntityManager em = EMF.createEntityManager();
-        // Populate the test database
+        // Populate the database
         try {
+            // Begin new transaction
             em.getTransaction().begin();
-            // Delete all if any rows
+            // Delete all rows if any exists
+            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
             em.createNamedQuery("Person.deleteAllRows").executeUpdate();
             em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
             // Create and persist addresses
             a1 = new Address("Falkonner Alle", 2800);
             a2 = new Address("Nørregaard", 3500);
             em.persist(a1);
             em.persist(a2);
-            // Create and persist persons (using the above addresses)
+            // Create and persist persons (using the address ids generated above)
             p1 = new Person("Mathias","LastName1", "Email1", a1);
             p2 = new Person("Martin", "LastName2","Email2", a1);
             p3 = new Person("Rabia", "LastName3","Email3", a2);
@@ -63,7 +65,7 @@ class PersonFacadeTest {
             em.persist(p2);
             em.persist(p3);
             em.persist(p4);
-            // Create and persist phones (using the above persons)
+            // Create and persist phones (using the person ids generated above)
             n1 = new Phone(12345678, "Mobile", p1);
             n2 = new Phone(23456789, "Mobile", p2);
             n3 = new Phone(34567890, "Mobile", p3);
@@ -81,6 +83,7 @@ class PersonFacadeTest {
             em.persist(h2);
             em.persist(h3);
             em.persist(h4);
+            // Commit transaction
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -93,21 +96,19 @@ class PersonFacadeTest {
 
     @Test
     public void testCreatePerson() throws Exception {
-        // Get DTOs from form
-        AddressDTO address = new AddressDTO("Nybrovej", 2800);
+        // Mock up DTOs
+        AddressDTO address = new AddressDTO("Nørgaardsvej 30", 2800);
         Set<PhoneDTO> phones = new LinkedHashSet<>();
-        phones.add(new PhoneDTO(87654321, "Mobile"));
-        phones.add(new PhoneDTO(76543210, "Home"));
-        PersonDTO pdto = new PersonDTO("Bertram", "Jensen", "bertramjensen@hotmail.dk", address, phones);
-        // Construct entity from DTOs
-        Person person = new Person(pdto);
+        phones.add(new PhoneDTO(87654321, "Home"));
+        phones.add(new PhoneDTO(76543210, "Mobile"));
+        PersonDTO pdto = new PersonDTO("Bertram", "Jensen", "bertramjensen@mail.dk", phones, address);
         // Persist person
-        FACADE.createPerson(person);
+        FACADE.createPerson(pdto);
     }
 
     @Test
-    public void testEditPerson() throws Exception {
-
+    public void testGetPersonById() throws Exception {
+        assertEquals(1, FACADE.getPersonById(1).getId());
     }
 
 }
