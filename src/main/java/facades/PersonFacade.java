@@ -3,9 +3,12 @@ package facades;
 import dtos.PersonDTO;
 import entities.Person;
 import entities.Phone;
+import errorhandling.EntityNotFoundException;
+import errorhandling.InternalErrorException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
 
 /**
  * A facade class that manages {@link javax.persistence.Entity entities} and
@@ -109,6 +112,36 @@ public class PersonFacade {
         // catch (Exception e) {
         //     throw e;
         // }
+        finally {
+            em.close();
+        }
+    }
+
+
+    public void editPerson(PersonDTO personDTO)throws EntityNotFoundException, InternalErrorException{
+
+        EntityManager em = EMF.createEntityManager();
+
+        try{
+            Person oldPerson = em.find(Person.class,personDTO.getId());
+
+            if(oldPerson == null){
+                throw new EntityNotFoundException("Could not find a person with the provided id " + personDTO.getId());
+            }
+
+            oldPerson.setFirstName(personDTO.getFirstName());
+            oldPerson.setLastName(personDTO.getLastName());
+            oldPerson.setEmail(personDTO.getEmail());
+
+
+            em.getTransaction().begin();
+            em.merge(oldPerson);
+            em.getTransaction().commit();
+
+        }
+        catch (PersistenceException e){
+            throw new InternalErrorException("Internal Server Problem. We are sorry for the inconvenience");
+        }
         finally {
             em.close();
         }
