@@ -1,8 +1,10 @@
 package dtos;
 
+import entities.Hobby;
 import entities.Person;
 import entities.Phone;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ public class PersonDTO {
     private String email;
     private AddressDTO address;
     private Set<PhoneDTO> phones = new LinkedHashSet<>();
+    private Set<InnerHobbyDTO> hobbies = new LinkedHashSet<>();
 
     public PersonDTO() {
     }
@@ -36,15 +39,21 @@ public class PersonDTO {
 
     // For converting an entity into a DTO
     public PersonDTO(Person person) {
-        if (person.getId() != null)
+        if (person.getId() != null) {
             this.id = person.getId();
+        }
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
         this.email = person.getEmail();
-        if (person.getAddress() != null)
+        if (person.getAddress() != null) {
             this.address = new AddressDTO(person.getAddress());
-        for (Phone phone : person.getPhones())
+        }
+        for (Phone phone : person.getPhones()) {
             this.phones.add(new PhoneDTO(phone));
+        }
+        for (Hobby hobby : person.getHobbies()) {
+            this.hobbies.add(new InnerHobbyDTO(hobby));
+        }
     }
 
     public Integer getId() {
@@ -101,6 +110,56 @@ public class PersonDTO {
 
     public void removePhone(PhoneDTO phone) {
         this.phones.remove(phone);
+    }
+
+    /**
+     * A DTO for the {@link entities.Person} entity
+     */
+    public static class InnerHobbyDTO implements Serializable {
+        private final Integer id;
+        private final String category;
+        private final String name;
+        private final String type;
+        private final String wikiLink;
+
+        // For moocking up a DTO
+        public InnerHobbyDTO(Integer id, String category, String name, String type, String wikiLink) {
+            this.id = id;
+            this.category = category;
+            this.name = name;
+            this.type = type;
+            this.wikiLink = wikiLink;
+        }
+
+        // For converting an entity to a DTO
+        public InnerHobbyDTO(Hobby hobby) {
+            this.id = hobby.getId();
+            this.category = hobby.getCategory();
+            this.name = hobby.getName();
+            this.type = hobby.getType();
+            this.wikiLink = hobby.getWikiLink();
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getWikiLink() {
+            return wikiLink;
+        }
+
     }
 
 }
