@@ -66,7 +66,7 @@ public class Person {
         this.firstName = pdto.getFirstName();
         this.lastName = pdto.getLastName();
         this.email = pdto.getEmail();
-        if (address != null)
+        if (pdto.getAddress() != null)
             this.address = new Address(pdto.getAddress());
         for (PhoneDTO phdto : pdto.getPhones())
             this.phones.add(new Phone(phdto));
