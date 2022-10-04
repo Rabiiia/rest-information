@@ -18,6 +18,13 @@ public class PersonDTO {
     }
 
     // For mocking up a DTO
+    public PersonDTO(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
+    // For mocking up a DTO
     public PersonDTO(String firstName, String lastName, String email, Set<PhoneDTO> phones, AddressDTO address) {
         this.firstName = firstName;
         this.lastName = lastName;
