@@ -1,12 +1,8 @@
 package dtos;
 
-import entities.Address;
 import entities.Person;
 import entities.Phone;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -27,7 +23,8 @@ public class PersonDTO {
         this.lastName = lastName;
         this.email = email;
         this.phones = phones;
-        this.address = address;
+        if (address != null)
+            this.address = address;
     }
 
     // For converting an entity into a DTO
@@ -37,7 +34,8 @@ public class PersonDTO {
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
         this.email = person.getEmail();
-        this.address = new AddressDTO(person.getAddress());
+        if (person.getAddress() != null)
+            this.address = new AddressDTO(person.getAddress());
         for (Phone phone : person.getPhones())
             this.phones.add(new PhoneDTO(phone));
     }
@@ -88,6 +86,14 @@ public class PersonDTO {
 
     public void setPhones(Set<PhoneDTO> phones) {
         this.phones = phones;
+    }
+
+    public void addPhone(PhoneDTO phone) {
+        this.phones.add(phone);
+    }
+
+    public void removePhone(PhoneDTO phone) {
+        this.phones.remove(phone);
     }
 
 }

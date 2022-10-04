@@ -35,7 +35,7 @@ public class Person {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "address_id", nullable = false)
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @OneToMany(mappedBy = "person")
@@ -55,15 +55,19 @@ public class Person {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.address = address;
+        if (address != null)
+            this.address = address;
     }
 
     // For converting a DTO into an entity
     public Person(PersonDTO pdto) {
+        if (pdto.getId() > 0)
+            this.id = pdto.getId();
         this.firstName = pdto.getFirstName();
         this.lastName = pdto.getLastName();
         this.email = pdto.getEmail();
-        this.address = new Address(pdto.getAddress());
+        if (address != null)
+            this.address = new Address(pdto.getAddress());
         for (PhoneDTO phdto : pdto.getPhones())
             this.phones.add(new Phone(phdto));
     }
@@ -108,12 +112,24 @@ public class Person {
         this.address = address;
     }
 
+    public void removeAddress() {
+        this.address = null;
+    }
+
     public Set<Phone> getPhones() {
         return phones;
     }
 
     public void setPhones(Set<Phone> phones) {
         this.phones = phones;
+    }
+
+    public void addPhone(Phone phone) {
+        this.phones.add(phone);
+    }
+
+    public void removePhone(Phone phone) {
+        this.phones.remove(phone);
     }
 
     public Set<Hobby> getHobbies() {
