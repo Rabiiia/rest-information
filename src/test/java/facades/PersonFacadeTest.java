@@ -1,5 +1,7 @@
 package facades;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dtos.AddressDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
@@ -7,6 +9,9 @@ import entities.Address;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
+import errorhandling.EntityFoundException;
+import errorhandling.EntityNotFoundException;
+import errorhandling.InternalErrorException;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 
@@ -17,10 +22,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class PersonFacadeTest {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactoryForTest();
     private static final PersonFacade FACADE = PersonFacade.getInstance(EMF);
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private static Address a1, a2;
     private static Person p1, p2, p3, p4;
@@ -32,8 +39,8 @@ class PersonFacadeTest {
 
     @BeforeAll
     public static void setUpClass() {
-        EntityManager em = EMF.createEntityManager();
         // Populate the database
+        EntityManager em = EMF.createEntityManager();
         try {
             // Begin new transaction
             em.getTransaction().begin();
@@ -109,20 +116,70 @@ class PersonFacadeTest {
     }
 
     @Test
-    public void testCreatePerson() throws Exception {
-        // Mock up DTOs
-        AddressDTO address = new AddressDTO("Nørgaardsvej 30", 2800);
-        Set<PhoneDTO> phones = new LinkedHashSet<>();
-        phones.add(new PhoneDTO(87654321, "Home"));
-        phones.add(new PhoneDTO(76543210, "Mobile"));
-        PersonDTO pdto = new PersonDTO("Bertram", "Jensen", "bertramjensen@mail.dk", phones, address);
-        // Persist person
-        FACADE.createPerson(pdto);
+    public void testCreatePerson() {
+        // Mock up a PersonDTO
+        PersonDTO pdto = new PersonDTO("Bertram", "Jensen", "bertramjensen@mail.dk");
+        pdto.addPhone(new PhoneDTO(87654321, "Home"));
+        pdto.addPhone(new PhoneDTO(76543210, "Mobile"));
+        pdto.setAddress(new AddressDTO("Nørgaardsvej 30", 2800));
+        // Try to persist person
+        try {
+            FACADE.createPerson(pdto);
+            System.out.println("Successfully created a new person!");
+        }
+        catch (InternalErrorException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Test
-    public void testGetPersonById() throws Exception {
-        assertEquals(1, FACADE.getPersonById(1).getId());
+    public void testGetPersonById() {
+        try {
+            PersonDTO pdto = FACADE.getPersonById(1);
+            System.out.println(GSON.toJson(pdto));
+        }
+        catch (EntityNotFoundException | InternalErrorException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetPersonByNumber() {
+        try {
+            PersonDTO pdto = FACADE.getPersonByNumber(12345678);
+            System.out.println(GSON.toJson(pdto));
+        }
+        catch (EntityNotFoundException | InternalErrorException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testUpdatePerson() {
+        // Mock up updates as a person DTO (one line)
+        PersonDTO pdto = new PersonDTO("UpdatedFirstName", "UpdatedLastName", "UpdatedEmail", new LinkedHashSet<>(), new AddressDTO("New Street", 2800));
+        // Set the DTOs id to an existing person's id
+        pdto.setId(p1.getId());
+        // Try to merge the updates into the existing person
+        try {
+            FACADE.updatePerson(pdto);
+            System.out.println("Successfully updated an existing person!");
+        }
+        catch (EntityNotFoundException | EntityFoundException | InternalErrorException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRemoveAddressFromPerson() {
+        try {
+            FACADE.removeAddressFromPerson(7);
+            assertNull(FACADE.getPersonById(7).getAddress());
+            System.out.println("Successfully removed a person's address!");
+        }
+        catch (EntityNotFoundException | InternalErrorException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }
