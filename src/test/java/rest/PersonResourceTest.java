@@ -1,19 +1,31 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import dtos.AddressDTO;
+import dtos.PersonDTO;
+import dtos.PhoneDTO;
+import entities.Address;
+import entities.Hobby;
 import entities.Person;
+import entities.Phone;
+import io.restassured.http.ContentType;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
+
 import io.restassured.parsing.Parser;
 import java.net.URI;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import static org.hamcrest.Matchers.equalTo;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,13 +35,17 @@ import org.junit.jupiter.api.Test;
 //Uncomment the line below, to temporarily disable this test
 @Disabled
 public class PersonResourceTest {
-    private static HttpServer httpServer;
     private static final String SERVER_URL = "http://localhost/api";
     private static final int SERVER_PORT = 7777;
     private static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
+    private static HttpServer httpServer;
     private static EntityManagerFactory emf;
-    private static Person p1, p2;
+    private static Address a1, a2;
+    private static Person p1, p2, p3, p4;
+    private static Phone n1, n2, n3, n4;
+    private static Hobby h1, h2, h3, h4;
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -62,45 +78,124 @@ public class PersonResourceTest {
     //TODO -- Make sure to change the EntityClass used below to use YOUR OWN (renamed) Entity class
     @BeforeEach
     public void setUp() {
+        // Populate the database
         EntityManager em = emf.createEntityManager();
-        //p1 = new Person("Some txt", "More text");
-        //p2 = new Person("aaa", "bbb");
-        //try {
-        //    em.getTransaction().begin();
-        //    em.createNamedQuery("Person.deleteAllRows").executeUpdate();
-        //    em.persist(p1);
-        //    em.persist(p2);
-        //    em.getTransaction().commit();
-        //} finally {
-        //    em.close();
-        //}
+        try {
+            // Begin new transaction
+            em.getTransaction().begin();
+            // Delete all rows if any exists
+            em.createNamedQuery("Phone.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Person.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Address.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Hobby.deleteAllRows").executeUpdate();
+            // Create and persist addresses
+            a1 = new Address("Falkonner Alle", 2800);
+            a2 = new Address("Nørregaard", 3500);
+            em.persist(a1);
+            em.persist(a2);
+            // Create and persist persons (using the address ids generated above)
+            p1 = new Person("Mathias","LastName1", "Email1", a1);
+            p2 = new Person("Martin", "LastName2","Email2", a1);
+            p3 = new Person("Rabia", "LastName3","Email3", a2);
+            p4 = new Person("Zack", "LastName4","Email4", a2);
+            em.persist(p1);
+            em.persist(p2);
+            em.persist(p3);
+            em.persist(p4);
+            // Create and persist phones (using the person ids generated above)
+            n1 = new Phone(12345678, "Mobile", p1);
+            n2 = new Phone(23456789, "Mobile", p2);
+            n3 = new Phone(34567890, "Mobile", p3);
+            n4 = new Phone(45678901, "Mobile", p4);
+            em.persist(n1);
+            em.persist(n2);
+            em.persist(n3);
+            em.persist(n4);
+            // Create and persist hobbies
+            h1 = new Hobby("", "Musik", "", "");
+            h2 = new Hobby("", "Fuglekiggeri", "", "");
+            h3 = new Hobby("", "Søvn", "", "");
+            h4 = new Hobby("", "Squash", "", "");
+            em.persist(h1);
+            em.persist(h2);
+            em.persist(h3);
+            em.persist(h4);
+            // Commit transaction
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 
-    //@Test
-    //public void testServerIsUp() {
-    //    System.out.println("Testing is server UP");
-    //    given().when().get("/xxx").then().statusCode(200);
-    //}
+    @Test
+    public void testServerIsUp() {
+        System.out.println("Testing is server UP");
+        given().when().get("/api").then().statusCode(200);
+    }
 
-    ////This test assumes the database contains two rows
-    //@Test
-    //public void testDummyMsg() throws Exception {
-    //    given()
-    //            .contentType("application/json")
-    //            .get("/xxx/").then()
-    //            .assertThat()
-    //            .statusCode(HttpStatus.OK_200.getStatusCode())
-    //            .body("msg", equalTo("Hello World"));
-    //}
+    @Test
+    public void testCreatePerson() {
+        // Mock up a PersonDTO
+        PersonDTO pdto = new PersonDTO("Bertram", "Jensen", "bertramjensen@mail.dk");
+        pdto.addPhone(new PhoneDTO(87654321, "Home"));
+        pdto.addPhone(new PhoneDTO(76543210, "Mobile"));
+        pdto.setAddress(new AddressDTO("New Street", 2800));
 
-    //@Test
-    //public void testCount() throws Exception {
-    //    given()
-    //            .contentType("application/json")
-    //            .get("/xxx/count").then()
-    //            .assertThat()
-    //            .statusCode(HttpStatus.OK_200.getStatusCode())
-    //            .body("count", equalTo(2));
-    //}
+        // Send request to REST API
+        given()
+                .header("Content-type", ContentType.JSON)
+                .body(GSON.toJson(pdto))
+                .when()
+                .post("/person")
+                // Validate response
+                .then()
+                .statusCode(
+                        anyOf(
+                                is(204), // No content when there's no exception
+                                is(200)  // Content with ExceptionDTO when no id is found
+                        )
+                );
+    }
+
+    @Test
+    public void testUpdatePerson() {
+        // Mock up a PersonDTO
+        PersonDTO pdto = new PersonDTO("Bertram", "Jensen", "bertramjensen@mail.dk");
+        pdto.addPhone(new PhoneDTO(87654321, "Home"));
+        pdto.addPhone(new PhoneDTO(76543210, "Mobile"));
+        pdto.setAddress(new AddressDTO("New Street", 2800));
+        pdto.setId(p1.getId());// <-- Set id to an existing person id
+
+        // Send request to REST API
+        given()
+                .header("Content-type", ContentType.JSON)
+                .body(GSON.toJson(pdto))
+                .when()
+                .put("/person/" + p1.getId())
+                // Validate response
+                .then()
+                .statusCode(
+                        anyOf(
+                                is(204), // No content when there's no exception
+                                is(200)  // Content with ExceptionDTO when no id is found
+                        )
+                );
+    }
+
+    @Test
+    public void testRemoveAddressFromPerson() {
+        // Send request to REST API
+        given()
+                .pathParam("id", 1)
+                .delete("/person/{id}/address")
+                // Validate response
+                .then()
+                .statusCode(
+                        anyOf(
+                                is(204), // No content when there's no exception
+                                is(200)  // Content with ExceptionDTO when no id is found
+                        )
+                );
+    }
 
 }

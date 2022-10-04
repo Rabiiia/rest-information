@@ -6,3 +6,49 @@ Content-Type: application/json
 #User-Agent: Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion
 
 {"str1": "First Property", "str2": "Second Property"}
+
+###
+POST http://localhost:8080/information/api/person
+Content-Type: application/json
+
+{
+  "firstName": "Created",
+  "lastName": "Created",
+  "email": "created@created.dk",
+  "phones": [
+    {
+      "number": 23456789,
+      "description": "Created Mobile"
+    }
+  ],
+  "address": {
+    "street": "Created Street",
+    "zipcode": 2100
+  }
+}
+
+###
+GET http://localhost:8080/information/api/person/12345678
+
+###
+PUT http://localhost:8080/information/api/person/1
+Content-Type: application/json
+
+{
+  "firstName": "Updated",
+  "lastName": "Updated",
+  "email": "updated@updated.dk",
+  "phones":  [
+    {
+      "number": 12345678,
+      "description": "Updated Mobile"
+    }
+  ],
+  "address": {
+    "street": "Updated Street",
+    "zipcode": 2100
+  }
+}
+
+###
+DELETE http://localhost:8080/information/api/person/1/address
