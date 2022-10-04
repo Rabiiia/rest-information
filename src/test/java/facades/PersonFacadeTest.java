@@ -158,8 +158,7 @@ class PersonFacadeTest {
     public void testUpdatePerson() {
         // Mock up updates as a person DTO (one line)
         PersonDTO pdto = new PersonDTO("UpdatedFirstName", "UpdatedLastName", "UpdatedEmail", new LinkedHashSet<>(), new AddressDTO("New Street", 2800));
-        // Set the DTOs id to an existing person's id
-        pdto.setId(p1.getId());
+        pdto.setId(p1.getId());// <-- Set id to an existing person id
         // Try to merge the updates into the existing person
         try {
             FACADE.updatePerson(pdto);
