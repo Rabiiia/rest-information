@@ -7,6 +7,7 @@ package errorhandling;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.ResponseDTO;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,11 +35,11 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
     public Response toResponse(Throwable e) {
         Logger.getLogger(GenericExceptionMapper.class.getName()).log(Level.SEVERE, null, e);
         Response.StatusType type = getStatusType(e);
-        ExceptionDTO err;
+        ResponseDTO err;
         if (e instanceof WebApplicationException) {
-            err = new ExceptionDTO(type.getStatusCode(), ((WebApplicationException) e).getMessage());
+            err = new ResponseDTO(type.getStatusCode(), ((WebApplicationException) e).getMessage());
         } else {
-            err = new ExceptionDTO(type.getStatusCode(), type.getReasonPhrase());
+            err = new ResponseDTO(type.getStatusCode(), type.getReasonPhrase());
         }
         return Response.status(type.getStatusCode())
                 .entity(GSON.toJson(err))

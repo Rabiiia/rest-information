@@ -2,6 +2,7 @@ package errorhandling;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.ResponseDTO;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +24,7 @@ public class EntityFoundExceptionMapper implements ExceptionMapper<EntityFoundEx
     @Override
     public Response toResponse(EntityFoundException e) {
         Logger.getLogger(EntityFoundExceptionMapper.class.getName()).log(Level.SEVERE, null, e);
-        ExceptionDTO err = new ExceptionDTO(CODE, e.getMessage());
+        ResponseDTO err = new ResponseDTO(CODE, e.getMessage());
 
         return Response.status(CODE)
                 .entity(GSON.toJson(err))

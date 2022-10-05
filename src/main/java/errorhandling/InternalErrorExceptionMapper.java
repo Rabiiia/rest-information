@@ -2,6 +2,7 @@ package errorhandling;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.ResponseDTO;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
@@ -23,7 +24,7 @@ public class InternalErrorExceptionMapper  implements ExceptionMapper<InternalEr
     @Override
     public Response toResponse(InternalErrorException e) {
         Logger.getLogger(InternalErrorExceptionMapper.class.getName()).log(Level.SEVERE, null, e);
-        ExceptionDTO err = new ExceptionDTO(CODE, e.getMessage());
+        ResponseDTO err = new ResponseDTO(CODE, e.getMessage());
 
         return Response.status(CODE)
                 .entity(GSON.toJson(err))
