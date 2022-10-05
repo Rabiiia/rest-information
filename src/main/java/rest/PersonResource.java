@@ -42,11 +42,10 @@ public class PersonResource {
     public Response getNumberOfPersons() {
         try {
             int personCount = FACADE.getPersons().size();
-            return Response.ok().entity(GSON.toJson(personCount)).build();
+            return Response.ok().entity(personCount).build();
         }
         catch (EntityNotFoundException e) {
-            ResponseDTO response = new ResponseDTO(StatusCode.NOT_FOUND, e.getMessage());
-            return Response.status(StatusCode.NOT_FOUND).entity(GSON.toJson(response)).build();
+            return Response.ok().entity(0).build();
         }
     }
 
@@ -159,8 +158,7 @@ public class PersonResource {
             return Response.ok().entity(personCount).build();
         }
         catch (EntityNotFoundException e) {
-            ResponseDTO response = new ResponseDTO(StatusCode.NOT_FOUND, e.getMessage());
-            return Response.status(StatusCode.NOT_FOUND).entity(GSON.toJson(response)).build();
+            return Response.ok().entity(0).build();
         }
         catch (InternalErrorException e) {
             ResponseDTO response = new ResponseDTO(StatusCode.INTERNAL_ERROR, e.getMessage());

@@ -42,11 +42,10 @@ public class HobbyResource {
     public Response getNumberOfHobbies() {
         try {
             int hobbyCount = FACADE.getHobbies().size();
-            return Response.ok().entity(GSON.toJson(hobbyCount)).build();
+            return Response.ok().entity(hobbyCount).build();
         }
         catch (EntityNotFoundException e) {
-            ResponseDTO response = new ResponseDTO(StatusCode.NOT_FOUND, e.getMessage());
-            return Response.status(StatusCode.NOT_FOUND).entity(GSON.toJson(response)).build();
+            return Response.ok().entity(0).build();
         }
     }
 
@@ -91,8 +90,7 @@ public class HobbyResource {
             return Response.ok().entity(personCount).build();
         }
         catch (EntityNotFoundException e) {
-            ResponseDTO response = new ResponseDTO(StatusCode.NOT_FOUND, e.getMessage());
-            return Response.status(StatusCode.NOT_FOUND).entity(GSON.toJson(response)).build();
+            return Response.ok().entity(0).build();
         }
         catch (InternalErrorException e) {
             ResponseDTO response = new ResponseDTO(StatusCode.INTERNAL_ERROR, e.getMessage());
