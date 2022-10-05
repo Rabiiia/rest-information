@@ -2,9 +2,8 @@ package dtos;
 
 import entities.Hobby;
 import entities.Person;
+import entities.Phone;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -13,16 +12,15 @@ import java.util.Set;
  * A DTO for the {@link entities.Hobby} entity
  */
 public class HobbyDTO implements Serializable {
-    private final Integer id;
+    private Integer id;
     private final String category;
     private final String name;
     private final String type;
     private final String wikiLink;
     private final Set<InnerPersonDTO> persons = new LinkedHashSet<>();
 
-    // For moocking up a DTO
-    public HobbyDTO(Integer id, String category, String name, String type, String wikiLink) {
-        this.id = id;
+    // For mocking up a DTO
+    public HobbyDTO(String category, String name, String type, String wikiLink) {
         this.category = category;
         this.name = name;
         this.type = type;
@@ -66,7 +64,7 @@ public class HobbyDTO implements Serializable {
     }
 
     /**
-     * A DTO for the {@link entities.Person} entity
+     * A DTO for the {@link Person} entity
      */
     public static class InnerPersonDTO implements Serializable {
         private final Integer id;
@@ -91,6 +89,9 @@ public class HobbyDTO implements Serializable {
             this.firstName = person.getFirstName();
             this.lastName = person.getLastName();
             this.email = person.getEmail();
+            for (Phone phone : person.getPhones()) {
+                this.phones.add(new PhoneDTO(phone));
+            }
             this.address = new AddressDTO(person.getAddress());
         }
 
@@ -110,12 +111,22 @@ public class HobbyDTO implements Serializable {
             return email;
         }
 
+        public Set<PhoneDTO> getPhones() {
+            return phones;
+        }
+
+        public void addPhone(PhoneDTO phoneDTO) {
+            phones.add(phoneDTO);
+        }
+
+        public void removePhone(PhoneDTO phoneDTO) {
+            phones.remove(phoneDTO);
+        }
+
         public AddressDTO getAddress() {
             return address;
         }
 
-        public Set<PhoneDTO> getPhones() {
-            return phones;
-        }
     }
+
 }

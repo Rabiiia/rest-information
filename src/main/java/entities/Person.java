@@ -1,5 +1,6 @@
 package entities;
 
+import dtos.HobbyDTO;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
 
@@ -55,21 +56,38 @@ public class Person {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        if (address != null)
-            this.address = address;
+        this.address = address;
     }
 
     // For converting a DTO into an entity
     public Person(PersonDTO pdto) {
-        if (pdto.getId() > 0)
-            this.id = pdto.getId();
+        this.id = pdto.getId();
         this.firstName = pdto.getFirstName();
         this.lastName = pdto.getLastName();
         this.email = pdto.getEmail();
-        if (pdto.getAddress() != null)
-            this.address = new Address(pdto.getAddress());
-        for (PhoneDTO phdto : pdto.getPhones())
+        for (PhoneDTO phdto : pdto.getPhones()) {
             this.phones.add(new Phone(phdto));
+        }
+        if (pdto.getAddress() != null) {
+            this.address = new Address(pdto.getAddress());
+        }
+        for (PersonDTO.InnerHobbyDTO hdto : pdto.getHobbies()) {
+            this.hobbies.add(new Hobby(hdto));
+        }
+    }
+
+    // For converting a DTO into an entity
+    public Person(HobbyDTO.InnerPersonDTO pdto) {
+        this.id = pdto.getId();
+        this.firstName = pdto.getFirstName();
+        this.lastName = pdto.getLastName();
+        this.email = pdto.getEmail();
+        for (PhoneDTO phdto : pdto.getPhones()) {
+            this.phones.add(new Phone(phdto));
+        }
+        if (pdto.getAddress() != null) {
+            this.address = new Address(pdto.getAddress());
+        }
     }
 
     public Integer getId() {
@@ -112,6 +130,10 @@ public class Person {
         this.address = address;
     }
 
+    public void setAddressId(int id) {
+        address.setId(id);
+    }
+
     public void removeAddress() {
         this.address = null;
     }
@@ -138,6 +160,14 @@ public class Person {
 
     public void setHobbies(Set<Hobby> hobbies) {
         this.hobbies = hobbies;
+    }
+
+    public void addHobby(Hobby hobby) {
+        this.hobbies.add(hobby);
+    }
+
+    public void removeHobby(Hobby hobby) {
+        this.hobbies.remove(hobby);
     }
 
 }

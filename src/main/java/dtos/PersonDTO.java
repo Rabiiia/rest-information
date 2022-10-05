@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class PersonDTO {
-    private int id;
+    private Integer id;
     private String firstName;
     private String lastName;
     private String email;
@@ -21,35 +21,24 @@ public class PersonDTO {
     }
 
     // For mocking up a DTO
-    public PersonDTO(String firstName, String lastName, String email) {
+    public PersonDTO(String firstName, String lastName, String email, AddressDTO address) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-    }
-
-    // For mocking up a DTO
-    public PersonDTO(String firstName, String lastName, String email, Set<PhoneDTO> phones, AddressDTO address) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phones = phones;
-        if (address != null)
-            this.address = address;
+        this.address = address;
     }
 
     // For converting an entity into a DTO
     public PersonDTO(Person person) {
-        if (person.getId() != null) {
-            this.id = person.getId();
-        }
+        this.id = person.getId();
         this.firstName = person.getFirstName();
         this.lastName = person.getLastName();
         this.email = person.getEmail();
-        if (person.getAddress() != null) {
-            this.address = new AddressDTO(person.getAddress());
-        }
         for (Phone phone : person.getPhones()) {
             this.phones.add(new PhoneDTO(phone));
+        }
+        if (person.getAddress() != null) {
+            this.address = new AddressDTO(person.getAddress());
         }
         for (Hobby hobby : person.getHobbies()) {
             this.hobbies.add(new InnerHobbyDTO(hobby));
@@ -112,8 +101,24 @@ public class PersonDTO {
         this.phones.remove(phone);
     }
 
+    public Set<InnerHobbyDTO> getHobbies() {
+        return hobbies;
+    }
+
+    public void setHobbies(Set<InnerHobbyDTO> hobbies) {
+        this.hobbies = hobbies;
+    }
+
+    public void addHobby(InnerHobbyDTO hobby) {
+        this.hobbies.add(hobby);
+    }
+
+    public void removePhone(InnerHobbyDTO hobby) {
+        this.hobbies.remove(hobby);
+    }
+
     /**
-     * A DTO for the {@link entities.Person} entity
+     * A DTO for the {@link Hobby} entity
      */
     public static class InnerHobbyDTO implements Serializable {
         private final Integer id;
@@ -122,7 +127,16 @@ public class PersonDTO {
         private final String type;
         private final String wikiLink;
 
-        // For moocking up a DTO
+        // For mocking up a DTO
+        public InnerHobbyDTO(String name) {
+            this.id = null;
+            this.category = null;
+            this.name = name;
+            this.type = null;
+            this.wikiLink = null;
+        }
+
+        // For mocking up a DTO
         public InnerHobbyDTO(Integer id, String category, String name, String type, String wikiLink) {
             this.id = id;
             this.category = category;

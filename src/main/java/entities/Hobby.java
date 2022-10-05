@@ -1,5 +1,8 @@
 package entities;
 
+import dtos.HobbyDTO;
+import dtos.PersonDTO;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -52,6 +55,25 @@ public class Hobby {
         this.wikiLink = wikiLink;
     }
 
+    // For converting a DTO to an entity
+    public Hobby(HobbyDTO hdto) {
+        this.category = hdto.getCategory();
+        this.name = hdto.getName();
+        this.type = hdto.getType();
+        this.wikiLink = hdto.getWikiLink();
+        for (HobbyDTO.InnerPersonDTO pdto : hdto.getPersons()) {
+            this.persons.add(new Person(pdto));
+        }
+    }
+
+    // For converting a DTO to an entity
+    public Hobby(PersonDTO.InnerHobbyDTO hdto) {
+        this.category = hdto.getCategory();
+        this.name = hdto.getName();
+        this.type = hdto.getType();
+        this.wikiLink = hdto.getWikiLink();
+    }
+
     public Integer getId() {
         return id;
     }
@@ -98,6 +120,14 @@ public class Hobby {
 
     public void setPersons(Set<Person> persons) {
         this.persons = persons;
+    }
+
+    public void addPerson(Person person) {
+        this.persons.add(person);
+    }
+
+    public void removePerson(Person persons) {
+        this.persons.remove(persons);
     }
 
 }
