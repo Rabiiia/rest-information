@@ -3,17 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package errorhandling;
+package dtos;
 
-/**
- *
- * @author jobe
- */
-public class ExceptionDTO {
+public class ResponseDTO {
     private int code;
     private String message;
 
-    public ExceptionDTO(int code, String message) {
+    public ResponseDTO(int code, String message) {
         this.code = code;
         this.message = message;
     }

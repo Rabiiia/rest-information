@@ -8,21 +8,45 @@ Content-Type: application/json
 {"str1": "First Property", "str2": "Second Property"}
 
 ###
+GET http://localhost:8080/information/api/person
+
+###
 POST http://localhost:8080/information/api/person
 Content-Type: application/json
 
 {
   "firstName": "Created",
-  "lastName": "Created",
-  "email": "created@created.dk",
+  "lastName": "Person",
+  "email": "new@mail.dk",
   "phones": [
     {
-      "number": 23456789,
-      "description": "Created Mobile"
+      "number": 34567890,
+      "description": "Mobile (main)"
     }
   ],
   "address": {
-    "street": "Created Street",
+    "street": "Creative Street 1",
+    "zipcode": 2800
+  }
+}
+
+###
+PUT http://localhost:8080/information/api/person
+Content-Type: application/json
+
+{
+  "id": 1,
+  "firstName": "Updated",
+  "lastName": "Person",
+  "email": "different@mail.dk",
+  "phones": [
+    {
+      "number": 98765432,
+      "description": "Office"
+    }
+  ],
+  "address": {
+    "street": "Progressive Street 2",
     "zipcode": 2100
   }
 }
@@ -31,24 +55,25 @@ Content-Type: application/json
 GET http://localhost:8080/information/api/person/12345678
 
 ###
-PUT http://localhost:8080/information/api/person/1
-Content-Type: application/json
-
-{
-  "firstName": "Updated",
-  "lastName": "Updated",
-  "email": "updated@updated.dk",
-  "phones":  [
-    {
-      "number": 12345678,
-      "description": "Updated Mobile"
-    }
-  ],
-  "address": {
-    "street": "Updated Street",
-    "zipcode": 2100
-  }
-}
+DELETE http://localhost:8080/information/api/person/1/address
 
 ###
-DELETE http://localhost:8080/information/api/person/1/address
+DELETE http://localhost:8080/information/api/phone/12345678
+
+###
+DELETE http://localhost:8080/information/api/person/1
+
+###
+GET http://localhost:8080/information/api/hobby
+
+###
+GET http://localhost:8080/information/api/hobby/count
+
+###
+GET http://localhost:8080/information/api/hobby/squash
+
+###
+GET http://localhost:8080/information/api/hobby/squash/persons
+
+###
+GET http://localhost:8080/information/api/hobby/squash/persons/count
