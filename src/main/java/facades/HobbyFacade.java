@@ -81,7 +81,7 @@ public class HobbyFacade {
         TypedQuery<Hobby> hobbyQuery = em.createQuery("SELECT h FROM Hobby h", Hobby.class);
         Set<Hobby> hobbies = new LinkedHashSet<>(hobbyQuery.getResultList());
         if (hobbies.size() == 0) {
-            throw new EntityNotFoundException("We currently have no hobbies in our system.");
+            throw new EntityNotFoundException("There are currently no hobbies in the database.");
         }
         Set<HobbyDTO> hobbyDTOs = new LinkedHashSet<>();
         for (Hobby hobby : hobbies) {

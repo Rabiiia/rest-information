@@ -83,7 +83,7 @@ public class PersonFacade {
         TypedQuery<Person> personQuery = em.createQuery("SELECT p FROM Person p", Person.class);
         Set<Person> persons = new LinkedHashSet<>(personQuery.getResultList());
         if (persons.size() == 0) {
-            throw new EntityNotFoundException("We currently have no hobbies in our system.");
+            throw new EntityNotFoundException("There are currently no persons in the database.");
         }
         Set<PersonDTO> personDTOs = new LinkedHashSet<>();
         for (Person person : persons) {
