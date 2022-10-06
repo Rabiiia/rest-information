@@ -98,6 +98,25 @@ public class PersonResource {
         }
     }
 
+    @DELETE
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response updatePerson(@PathParam("id") int id) {
+        try {
+            FACADE.deletePerson(id);
+            ResponseDTO response = new ResponseDTO(StatusCode.OK, "Deleted!");
+            return Response.ok().entity(GSON.toJson(response)).build();
+        }
+        catch (EntityNotFoundException e) {
+            ResponseDTO response = new ResponseDTO(StatusCode.NOT_FOUND, e.getMessage());
+            return Response.status(StatusCode.NOT_FOUND).entity(GSON.toJson(response)).build();
+        }
+        catch (InternalErrorException e) {
+            ResponseDTO response = new ResponseDTO(StatusCode.INTERNAL_ERROR, e.getMessage());
+            return Response.status(StatusCode.INTERNAL_ERROR).entity(GSON.toJson(response)).build();
+        }
+    }
+
     @GET
     @Path("{number}")
     @Produces({MediaType.APPLICATION_JSON})

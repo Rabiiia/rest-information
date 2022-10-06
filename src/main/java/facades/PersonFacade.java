@@ -237,6 +237,33 @@ public class PersonFacade {
     }
 
     /**
+     * Deletes a {@link Person} from the database.
+     *
+     * @param id a person id.
+     * @see EntityManager#remove
+     */
+    public void deletePerson(int id) throws EntityNotFoundException, InternalErrorException {
+        // Remove ONLY if the person exists!
+        Person person = UTIL.personExists(id);// <-- Throws an exception otherwise
+        // Create an entity manager to remove the person
+        EntityManager em = EMF.createEntityManager();
+        try {
+            // Begin entity transaction
+            em.getTransaction().begin();
+            // Remove person
+            em.remove(person);
+            // Commit entity transaction to database
+            em.getTransaction().commit();
+        }
+        catch (PersistenceException e) {
+            throw new InternalErrorException(e.getMessage());
+        }
+        finally {
+            em.close();
+        }
+    }
+
+    /**
      * Returns an {@link Address} with an id given an {@link Address} with no id.
      *
      * @param address an {@link Address} with no id.
