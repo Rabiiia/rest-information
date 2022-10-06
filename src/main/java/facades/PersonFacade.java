@@ -82,9 +82,9 @@ public class PersonFacade {
         EntityManager em = EMF.createEntityManager();
         TypedQuery<Person> personQuery = em.createQuery("SELECT p FROM Person p", Person.class);
         Set<Person> persons = new LinkedHashSet<>(personQuery.getResultList());
-        if (persons.size() == 0) {
-            throw new EntityNotFoundException("There are currently no persons in the database.");
-        }
+       // if (persons.size() == 0) {
+         //   throw new EntityNotFoundException("There are currently no persons in the database.");
+       // }
         Set<PersonDTO> personDTOs = new LinkedHashSet<>();
         for (Person person : persons) {
             personDTOs.add(new PersonDTO(person));
