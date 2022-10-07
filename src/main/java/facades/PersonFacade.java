@@ -219,6 +219,8 @@ public class PersonFacade {
             em.getTransaction().begin();
             // Set an id for the address (address currently has no id)
             person.setAddress(getAddressWithId(person.getAddress(), em));
+            // Remove phones (to avoid phones persisting without person ids)
+            removePhones(person.getPhones());
             // Persist phones
             persistPhonesBelongingToPerson(person, em, CHECK_OWNERSHIP);
             // Overwrite hobbies without ids with hobbies with ids
@@ -410,6 +412,12 @@ public class PersonFacade {
         }
         finally {
             em.close();
+        }
+    }
+
+    public void removePhones(Set<Phone> phones) throws EntityNotFoundException, InternalErrorException {
+        for (Phone phone : phones) {
+            removePhone(phone.getNumber());
         }
     }
 }
