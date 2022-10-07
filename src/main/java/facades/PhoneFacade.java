@@ -1,8 +1,6 @@
 package facades;
 
-import dtos.PersonDTO;
 import dtos.PhoneDTO;
-import entities.Person;
 import entities.Phone;
 import errorhandling.EntityNotFoundException;
 import errorhandling.InternalErrorException;
@@ -78,12 +76,12 @@ public class PhoneFacade {
      * @return {@link Set}.
      * @see TypedQuery
      */
-    public Set<PhoneDTO> getPhones() throws EntityNotFoundException {
+    public Set<PhoneDTO> getPhones() {
         EntityManager em = EMF.createEntityManager();
-        TypedQuery<Phone> personQuery = em.createQuery("SELECT t FROM Phone t", Phone.class);
-        Set<Phone> phones = new LinkedHashSet<>(personQuery.getResultList());
-        // if (persons.size() == 0) {
-        //   throw new EntityNotFoundException("There are currently no persons in the database.");
+        TypedQuery<Phone> phoneQuery = em.createQuery("SELECT t FROM Phone t", Phone.class);
+        Set<Phone> phones = new LinkedHashSet<>(phoneQuery.getResultList());
+        // if (phone.size() == 0) {
+        //   throw new EntityNotFoundException("There are currently no phones in the database.");
         // }
         Set<PhoneDTO> phoneDTOs = new LinkedHashSet<>();
         for (Phone phone : phones) {

@@ -3,12 +3,9 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.PhoneDTO;
-import entities.Phone;
 import errorhandling.EntityNotFoundException;
 import dtos.ResponseDTO;
 import errorhandling.InternalErrorException;
-import facades.HobbyFacade;
-import facades.PersonFacade;
 import facades.PhoneFacade;
 import utils.EMF_Creator;
 import utils.StatusCode;
@@ -27,14 +24,9 @@ public class PhoneResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getHobbies() {
-        try {
-            Set<PhoneDTO> phoneDTOs = FACADE.getPhones();
-            return Response.ok().entity(GSON.toJson(phoneDTOs)).build();
-        } catch (EntityNotFoundException e) {
-            ResponseDTO response = new ResponseDTO(StatusCode.NOT_FOUND, e.getMessage());
-            return Response.status(StatusCode.NOT_FOUND).entity(GSON.toJson(response)).build();
-        }
+    public Response getPhones() {
+        Set<PhoneDTO> phoneDTOs = FACADE.getPhones();
+        return Response.ok().entity(GSON.toJson(phoneDTOs)).build();
     }
 
     @DELETE

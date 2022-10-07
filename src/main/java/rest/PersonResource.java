@@ -9,6 +9,7 @@ import dtos.ResponseDTO;
 import errorhandling.InternalErrorException;
 import facades.PersonFacade;
 import utils.EMF_Creator;
+import utils.FacadeUtility;
 import utils.StatusCode;
 
 import javax.persistence.EntityManagerFactory;
@@ -21,6 +22,7 @@ import java.util.Set;
 public class PersonResource {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final PersonFacade FACADE = PersonFacade.getInstance(EMF);
+    private static final FacadeUtility UTIL = FacadeUtility.getInstance(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @GET
@@ -101,7 +103,7 @@ public class PersonResource {
     @DELETE
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response updatePerson(@PathParam("id") int id) {
+    public Response deletePerson(@PathParam("id") int id) {
         try {
             FACADE.deletePerson(id);
             ResponseDTO response = new ResponseDTO(StatusCode.OK, "Deleted!");
@@ -118,7 +120,21 @@ public class PersonResource {
     }
 
     @GET
-    @Path("{number}")
+    @Path("id/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getPersonById(@PathParam("id") int id) {
+        try {
+            PersonDTO personDTO = new PersonDTO(UTIL.personExists(id));
+            return Response.ok().entity(GSON.toJson(personDTO)).build();
+        }
+        catch (EntityNotFoundException e) {
+            ResponseDTO response = new ResponseDTO(StatusCode.NOT_FOUND, e.getMessage());
+            return Response.status(StatusCode.NOT_FOUND).entity(GSON.toJson(response)).build();
+        }
+    }
+
+    @GET
+    @Path("number/{number}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getPersonByNumber(@PathParam("number") int number) {
         try {
