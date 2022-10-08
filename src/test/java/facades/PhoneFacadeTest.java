@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.PersonDTO;
 import dtos.PhoneDTO;
-import errorhandling.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 import utils.FacadeUtility;
@@ -63,13 +62,8 @@ class PhoneFacadeTest {
 
     @Test
     public void getPhones() {
-        try {
-            Set<PhoneDTO> phoneDTOs = FACADE.getPhones();
-            assertTrue(phoneDTOs.size() > 0);
-            System.out.println(GSON.toJson(phoneDTOs));
-        }
-        catch (EntityNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
+        Set<PhoneDTO> phoneDTOs = FACADE.getPhones();
+        assertTrue(phoneDTOs.size() > 0);
+        System.out.println(GSON.toJson(phoneDTOs));
     }
 }
