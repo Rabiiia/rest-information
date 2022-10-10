@@ -189,7 +189,7 @@ public class PersonFacade {
             // Persist person (using the foreign address id set above)
             em.persist(person);
             // Persist phones (using the foreign person id generated above)
-            persistPhonesBelongingToPerson(person, em);
+            updatePhones(person, em);
             // Commit entity transaction to database
             em.getTransaction().commit();
         }
@@ -219,10 +219,8 @@ public class PersonFacade {
             em.getTransaction().begin();
             // Set an id for the address (address currently has no id)
             person.setAddress(getAddressWithId(person.getAddress(), em));
-            // Remove phones (to avoid phones persisting without person ids)
-            removePhones(person.getPhones(), em);
-            // Persist phones
-            persistPhonesBelongingToPerson(person, em, CHECK_OWNERSHIP);
+            // Update phones
+            updatePhones(person, em, CHECK_OWNERSHIP);
             // Overwrite hobbies without ids with hobbies with ids
             person.setHobbies(getHobbiesWithIds(person.getHobbies()));
             // Merge altered entity into existing entity
@@ -293,8 +291,8 @@ public class PersonFacade {
      * @param em an {@link EntityManager} with a reference to an {@link EntityTransaction}.
      * @throws EntityFoundException
      */
-    private void persistPhonesBelongingToPerson(Person person, EntityManager em) throws EntityFoundException {
-        persistPhonesBelongingToPerson(person, em, false);
+    private void updatePhones(Person person, EntityManager em) throws EntityFoundException, InternalErrorException {
+        updatePhones(person, em, false);
     }
 
     /**
@@ -306,7 +304,7 @@ public class PersonFacade {
      *                       if the person already exists in the database.
      * @throws EntityFoundException
      */
-    public void persistPhonesBelongingToPerson(Person person, EntityManager em, boolean checkOwnership) throws EntityFoundException {
+    public void updatePhones(Person person, EntityManager em, boolean checkOwnership) throws EntityFoundException, InternalErrorException {
         for (Phone phone : person.getPhones()) {
             try {
                 Phone existingPhone = UTIL.phoneExists(phone.getNumber());
@@ -315,14 +313,23 @@ public class PersonFacade {
                     // we don't want to change the ownership of that phone number
                     throw new EntityFoundException("The phone number " + phone.getNumber() + " is already associated with another person!");
                 }
-                // If it exists, but it belongs to us, we don't want to persist it (again)
+                // If it exists, but it belongs to us, we simply want to update the description
+                em.merge(phone);
             }
-            catch (EntityNotFoundException e) {
+            catch (EntityNotFoundException nfe) {
                 // If the phone number does not exist in the phone table:
-                // Add the foreign person id to the phone (person id cannot be null!)
-                phone.setPerson(person);
-                // Persist phone
-                em.persist(phone);
+                try {
+                    // Add the foreign person id to the phone (person id cannot be null!)
+                    phone.setPerson(person);
+                    // Persist phone
+                    em.persist(phone);
+                }
+                catch (PersistenceException pe) {
+                    throw new InternalErrorException("Could not create phone.");
+                }
+            }
+            catch (PersistenceException pe) {
+                throw new InternalErrorException("Could not update phone.");
             }
         }
     }
