@@ -11,7 +11,7 @@ public class ResponseDTO {
 
     public ResponseDTO(int code, String message) {
         this.code = code;
-        this.message = message;
+        this.message = message.replace("\n", "<br>");
     }
 
 }
