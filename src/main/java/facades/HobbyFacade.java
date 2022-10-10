@@ -91,9 +91,9 @@ public class HobbyFacade {
     }
 
     /**
-     * Returns a {@link Set<Hobby>} of every {@link Hobby} with a given person {@code id}.
+     * Returns a {@link Set<Hobby>} of every {@link Hobby} with a given hobby {@code name}.
      *
-     * @param id a person id.
+     * @param name a hobby name.
      * @return {@link Set<Hobby>}.
      * @see TypedQuery
      */
@@ -134,5 +134,24 @@ public class HobbyFacade {
             personDTOs.add(new PersonDTO(person));
         }
         return personDTOs;
+    }
+
+    /**
+     * Finds a {@link Set} of every {@link Person} with a given hobby {@code name} in the database.
+     *
+     * @param query a hobby name.
+     * @return {@link Set}.
+     * @see TypedQuery
+     * @see EntityManager#find
+     */
+    public Set<HobbyDTO> searchHobbies(String query) {
+        EntityManager em = EMF.createEntityManager();
+        TypedQuery<Hobby> hobbyQuery = em.createQuery("SELECT h FROM Hobby h WHERE h.name LIKE :query", Hobby.class);
+        hobbyQuery.setParameter("query", "%" + query + "%");
+        Set<HobbyDTO> hobbyDTOs = new LinkedHashSet<>();
+        for (Hobby hobby : hobbyQuery.getResultList()) {
+            hobbyDTOs.add(new HobbyDTO(hobby));
+        }
+        return hobbyDTOs;
     }
 }

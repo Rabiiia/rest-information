@@ -37,6 +37,14 @@ public class HobbyResource {
     }
 
     @GET
+    @Path("/search/{query}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getMatches(@PathParam("query") String query) {
+        Set<HobbyDTO> hobbyDTOs = FACADE.searchHobbies(query);
+        return Response.ok().entity(hobbyDTOs).build();
+    }
+
+    @GET
     @Path("/count")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getNumberOfHobbies() {
