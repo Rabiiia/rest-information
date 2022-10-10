@@ -219,8 +219,6 @@ public class PersonFacade {
             em.getTransaction().begin();
             // Set an id for the address (address currently has no id)
             person.setAddress(getAddressWithId(person.getAddress(), em));
-            // Remove the person's existing phones that are not specified
-            removeExistingPhonesNotSpecifiedByPerson(person, em);
             // Persist the new phones and add them to the person
             person.setPhones(getPersistedPhonesSpecifiedByPerson(person, em, CHECK_OWNERSHIP));
             // Overwrite hobbies without ids with hobbies with ids
@@ -307,6 +305,7 @@ public class PersonFacade {
      * @throws EntityFoundException
      */
     public Set<Phone> getPersistedPhonesSpecifiedByPerson(Person person, EntityManager em, boolean checkOwnership) throws EntityFoundException, InternalErrorException {
+        removeExistingPhonesNotSpecifiedByPerson(person, em);
         Set<Phone> persistedPhones = new LinkedHashSet<>();
         for (Phone phone : person.getPhones()) {
             try {
@@ -318,6 +317,8 @@ public class PersonFacade {
                 }
                 // If the phone number exists, but it belongs to the person:
                 try {
+                    // Add the foreign person id to the phone (person id cannot be null!)
+                    phone.setPerson(person);
                     // Merge phone
                     em.merge(phone);
                     // Collect merged phone
@@ -436,15 +437,18 @@ public class PersonFacade {
      * @see EntityManager#remove
      */
     public void removeExistingPhonesNotSpecifiedByPerson(Person person, EntityManager em) {
+        // Get the person's existing phones
         TypedQuery<Phone> phoneQuery = em.createQuery("SELECT t FROM Phone t WHERE t.person.id = :pid", Phone.class);
         phoneQuery.setParameter("pid", person.getId());
+        // Remove phones not specified by the person
         for (Phone existingPhone : phoneQuery.getResultList()) {
             boolean removePhone = true;
             for (Phone specifiedPhone : person.getPhones()) {
-                // If the person wants to keep an existing phone...
+                // If the person HAS specified an existing phone...
                 if (Objects.equals(specifiedPhone.getNumber(), existingPhone.getNumber())) {
-                    // do not remove the phone
+                    // do NOT remove the phone
                     removePhone = false;
+                    break;
                 }
             }
             if (removePhone) {
