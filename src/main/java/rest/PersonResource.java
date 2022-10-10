@@ -88,7 +88,7 @@ public class PersonResource {
         }
         catch (EntityNotFoundException e) {
             ResponseDTO response = new ResponseDTO(StatusCode.NOT_FOUND, e.getMessage());
-            return Response.status(StatusCode.NOT_FOUND).entity(GSON.toJson(response)).build();
+            return Response.ok().entity(GSON.toJson(response)).build();
         }
         catch (EntityFoundException e) {
             ResponseDTO response = new ResponseDTO(StatusCode.FOUND, e.getMessage());
@@ -96,7 +96,7 @@ public class PersonResource {
         }
         catch (InternalErrorException e) {
             ResponseDTO response = new ResponseDTO(StatusCode.INTERNAL_ERROR, e.getMessage());
-            return Response.status(StatusCode.INTERNAL_ERROR).entity(GSON.toJson(response)).build();
+            return Response.ok().entity(GSON.toJson(response)).build();
         }
     }
 
