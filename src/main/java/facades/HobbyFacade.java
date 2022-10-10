@@ -120,7 +120,7 @@ public class HobbyFacade {
      */
     public Set<PersonDTO> getPersonsByHobbyName(String name) throws EntityNotFoundException, InternalErrorException {
         // Find hobby in hobby table
-        Hobby hobby = UTIL.hobbyExists(name);
+        Hobby hobby = UTIL.hobbyNameExists(name);
         // Find persons who have this hobby
         Set<Person> persons = UTIL.getPersonsByHobbyId(hobby.getId());
         // Prepare DTO for persons

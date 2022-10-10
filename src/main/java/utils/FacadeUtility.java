@@ -89,6 +89,23 @@ public class FacadeUtility {
     }
 
     /**
+     * Checks if a {@link Hobby} with a given {@code id} exists in the database.
+     *
+     * @param id a hobby id.
+     * @return a {@link Hobby} – if one exits.
+     * @throws EntityNotFoundException if no hobby is found.
+     * @see TypedQuery
+     */
+    public Hobby hobbyExists(int id) throws EntityNotFoundException {
+        EntityManager em = EMF.createEntityManager();
+        Hobby hobby = em.find(Hobby.class, id);
+        if (hobby == null) {
+            throw new EntityNotFoundException("Could not find the " + id + " hobby.");
+        }
+        return hobby;
+    }
+
+    /**
      * Checks if a {@link Hobby} with a given {@code name} exists in the database.
      *
      * @param name a hobby name.
@@ -96,12 +113,12 @@ public class FacadeUtility {
      * @throws EntityNotFoundException if no hobby is found.
      * @see TypedQuery
      */
-    public Hobby hobbyExists(String name) throws EntityNotFoundException {
+    public Hobby hobbyNameExists(String name) throws EntityNotFoundException {
         EntityManager em = EMF.createEntityManager();
-        TypedQuery<Hobby> hobbbyQuery = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :name", Hobby.class);
-        hobbbyQuery.setParameter("name", name);
+        TypedQuery<Hobby> hobbyQuery = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :name", Hobby.class);
+        hobbyQuery.setParameter("name", name);
         try {
-            return hobbbyQuery.getSingleResult();
+            return hobbyQuery.getSingleResult();
         }
         catch (NoResultException e) {
             throw new EntityNotFoundException("Could not find the " + name + " hobby.");

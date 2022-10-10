@@ -122,7 +122,7 @@ public class PersonFacade {
      */
     public Set<PersonDTO> getPersonsByHobbyName(String name) throws EntityNotFoundException, InternalErrorException {
         // Find hobby in hobby table
-        Hobby hobby = UTIL.hobbyExists(name);
+        Hobby hobby = UTIL.hobbyNameExists(name);
         // Find persons who have this hobby
         hobby.setPersons(UTIL.getPersonsByHobbyId(hobby.getId()));
         // Prepare DTO for persons
@@ -220,7 +220,7 @@ public class PersonFacade {
             // Set an id for the address (address currently has no id)
             person.setAddress(getAddressWithId(person.getAddress(), em));
             // Remove phones (to avoid phones persisting without person ids)
-            removePhones(person.getPhones());
+            removePhones(person.getPhones(), em);
             // Persist phones
             persistPhonesBelongingToPerson(person, em, CHECK_OWNERSHIP);
             // Overwrite hobbies without ids with hobbies with ids
@@ -338,7 +338,7 @@ public class PersonFacade {
     public Set<Hobby> getHobbiesWithIds(Set<Hobby> hobbiesWithoutIds) throws EntityNotFoundException {
         Set<Hobby> hobbiesWithIds = new LinkedHashSet<>();
         for (Hobby hobby : hobbiesWithoutIds) {
-            hobbiesWithIds.add(UTIL.hobbyExists(hobby.getName()));
+            hobbiesWithIds.add(UTIL.hobbyNameExists(hobby.getName()));
         }
         return hobbiesWithIds;
     }
@@ -394,30 +394,24 @@ public class PersonFacade {
      * @see EntityManager#find
      * @see EntityManager#remove
      */
-    public void removePhone(int number) throws EntityNotFoundException, InternalErrorException {
+    public void removePhone(int number, EntityManager em) throws EntityNotFoundException, InternalErrorException {
         // Find phone in person table
         Phone phone = UTIL.phoneExists(number);
-        // Create entity manager to remove address
-        EntityManager em = EMF.createEntityManager();
         try {
-            // Begin entity transaction
-            em.getTransaction().begin();
             // Remove phone from phone table
             em.remove(phone);
-            // Commit entity transaction to database
-            em.getTransaction().commit();
         }
         catch (PersistenceException e){
-            throw new InternalErrorException(e.getMessage());
+            throw new InternalErrorException("Could not remove phone from database.");
         }
         finally {
             em.close();
         }
     }
 
-    public void removePhones(Set<Phone> phones) throws EntityNotFoundException, InternalErrorException {
+    public void removePhones(Set<Phone> phones, EntityManager em) throws EntityNotFoundException, InternalErrorException {
         for (Phone phone : phones) {
-            removePhone(phone.getNumber());
+            removePhone(phone.getNumber(), em);
         }
     }
 }
