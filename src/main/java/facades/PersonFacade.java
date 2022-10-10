@@ -219,9 +219,9 @@ public class PersonFacade {
             em.getTransaction().begin();
             // Set an id for the address (address currently has no id)
             person.setAddress(getAddressWithId(person.getAddress(), em));
-            // Remove all the person's existing phones
-            removeAllExistingPhonesFromPerson(person, em);
-            // Persist the new phones and add to person
+            // Remove the person's existing phones that are not specified
+            removeExistingPhonesNotSpecifiedByPerson(person, em);
+            // Persist the new phones and add them to the person
             person.setPhones(getPersistedPhonesSpecifiedByPerson(person, em, CHECK_OWNERSHIP));
             // Overwrite hobbies without ids with hobbies with ids
             person.setHobbies(getHobbiesWithIds(person.getHobbies()));
@@ -316,6 +316,16 @@ public class PersonFacade {
                     // we don't want to change the ownership of that phone number
                     throw new EntityFoundException("The phone number " + phone.getNumber() + " is already associated with another person!");
                 }
+                // If the phone number exists, but it belongs to the person:
+                try {
+                    // Merge phone
+                    em.merge(phone);
+                    // Collect merged phone
+                    persistedPhones.add(phone);
+                }
+                catch (PersistenceException pe) {
+                    throw new InternalErrorException("Could not update a phone.");
+                }
             }
             catch (EntityNotFoundException nfe) {
                 // If the phone number does not exist in the phone table:
@@ -332,7 +342,7 @@ public class PersonFacade {
                 }
             }
         }
-        // return persisted phones
+        // Return persisted phones
         return persistedPhones;
     }
 
@@ -347,7 +357,7 @@ public class PersonFacade {
     public Set<Hobby> getHobbiesWithIds(Set<Hobby> hobbiesWithoutIds) throws EntityNotFoundException {
         Set<Hobby> hobbiesWithIds = new LinkedHashSet<>();
         for (Hobby hobby : hobbiesWithoutIds) {
-            //hobbiesWithIds.add(UTIL.hobbyNameExists(hobby.getName()));
+            hobbiesWithIds.add(UTIL.hobbyNameExists(hobby.getName()));
         }
         return hobbiesWithIds;
     }
@@ -425,12 +435,22 @@ public class PersonFacade {
      * @see EntityManager#find
      * @see EntityManager#remove
      */
-    public void removeAllExistingPhonesFromPerson(Person person, EntityManager em) {
+    public void removeExistingPhonesNotSpecifiedByPerson(Person person, EntityManager em) {
         TypedQuery<Phone> phoneQuery = em.createQuery("SELECT t FROM Phone t WHERE t.person.id = :pid", Phone.class);
         phoneQuery.setParameter("pid", person.getId());
-        for (Phone phone : phoneQuery.getResultList()) {
-            // Remove phone from phone table
-            em.remove(phone);
+        for (Phone existingPhone : phoneQuery.getResultList()) {
+            boolean removePhone = true;
+            for (Phone specifiedPhone : person.getPhones()) {
+                // If the person wants to keep an existing phone...
+                if (Objects.equals(specifiedPhone.getNumber(), existingPhone.getNumber())) {
+                    // do not remove the phone
+                    removePhone = false;
+                }
+            }
+            if (removePhone) {
+                // Remove existing phone from phone table
+                em.remove(existingPhone);
+            }
         }
     }
 }
