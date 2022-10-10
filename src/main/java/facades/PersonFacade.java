@@ -231,7 +231,7 @@ public class PersonFacade {
             em.getTransaction().commit();
         }
         catch (PersistenceException e) {
-            throw new InternalErrorException(e.getMessage());
+            throw new InternalErrorException("Failed to update person.");
         }
         finally {
             em.close();
