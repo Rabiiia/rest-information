@@ -223,13 +223,13 @@ public class PersonFacade {
             updatePhones(person, em, CHECK_OWNERSHIP);
             // Overwrite hobbies without ids with hobbies with ids
             person.setHobbies(getHobbiesWithIds(person.getHobbies()));
-            // Merge altered entity into existing entity
+            // Merge altered person with existing person
             em.merge(person);
             // Commit entity transaction to database
             em.getTransaction().commit();
         }
         catch (PersistenceException e) {
-            throw new InternalErrorException("Failed to update person.\n" + e.getMessage());
+            throw new InternalErrorException("Failed to update person.");
         }
         finally {
             em.close();
@@ -313,7 +313,10 @@ public class PersonFacade {
                     // we don't want to change the ownership of that phone number
                     throw new EntityFoundException("The phone number " + phone.getNumber() + " is already associated with another person!");
                 }
-                // If it exists, but it belongs to us, we simply want to update the description
+                // If it exists, but it belongs to us, we simply want to update the description:
+                // Add person id to phone
+                phone.setPerson(person);
+                // Merge altered phone with existing phone
                 em.merge(phone);
             }
             catch (EntityNotFoundException nfe) {
