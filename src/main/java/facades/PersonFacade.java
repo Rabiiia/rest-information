@@ -189,7 +189,7 @@ public class PersonFacade {
             // Persist person (using the foreign address id set above)
             em.persist(person);
             // Persist phones (using the foreign person id generated above)
-            persistNewPhonesSpecifiedByPerson(person, em);
+            getPersistedPhonesSpecifiedByPerson(person, em);
             // Commit entity transaction to database
             em.getTransaction().commit();
         }
@@ -221,8 +221,8 @@ public class PersonFacade {
             person.setAddress(getAddressWithId(person.getAddress(), em));
             // Remove all the person's existing phones
             removeAllExistingPhonesFromPerson(person, em);
-            // Persist the new phones to person
-            persistNewPhonesSpecifiedByPerson(person, em, CHECK_OWNERSHIP);
+            // Persist the new phones and add to person
+            person.setPhones(getPersistedPhonesSpecifiedByPerson(person, em, CHECK_OWNERSHIP));
             // Overwrite hobbies without ids with hobbies with ids
             person.setHobbies(getHobbiesWithIds(person.getHobbies()));
             // Merge altered person with existing person
@@ -293,8 +293,8 @@ public class PersonFacade {
      * @param em an {@link EntityManager} with a reference to an {@link EntityTransaction}.
      * @throws EntityFoundException
      */
-    private void persistNewPhonesSpecifiedByPerson(Person person, EntityManager em) throws EntityFoundException, InternalErrorException {
-        persistNewPhonesSpecifiedByPerson(person, em, false);
+    private void getPersistedPhonesSpecifiedByPerson(Person person, EntityManager em) throws EntityFoundException, InternalErrorException {
+        getPersistedPhonesSpecifiedByPerson(person, em, false);
     }
 
     /**
@@ -306,7 +306,8 @@ public class PersonFacade {
      *                       if the person already exists in the database.
      * @throws EntityFoundException
      */
-    public void persistNewPhonesSpecifiedByPerson(Person person, EntityManager em, boolean checkOwnership) throws EntityFoundException, InternalErrorException {
+    public Set<Phone> getPersistedPhonesSpecifiedByPerson(Person person, EntityManager em, boolean checkOwnership) throws EntityFoundException, InternalErrorException {
+        Set<Phone> persistedPhones = new LinkedHashSet<>();
         for (Phone phone : person.getPhones()) {
             try {
                 Phone existingPhone = UTIL.phoneExists(phone.getNumber());
@@ -323,12 +324,16 @@ public class PersonFacade {
                     phone.setPerson(person);
                     // Persist phone
                     em.persist(phone);
+                    // Collect persisted phone
+                    persistedPhones.add(phone);
                 }
                 catch (PersistenceException pe) {
                     throw new InternalErrorException("Could not add a phone.");
                 }
             }
         }
+        // return persisted phones
+        return persistedPhones;
     }
 
     /**
@@ -342,7 +347,7 @@ public class PersonFacade {
     public Set<Hobby> getHobbiesWithIds(Set<Hobby> hobbiesWithoutIds) throws EntityNotFoundException {
         Set<Hobby> hobbiesWithIds = new LinkedHashSet<>();
         for (Hobby hobby : hobbiesWithoutIds) {
-            hobbiesWithIds.add(UTIL.hobbyNameExists(hobby.getName()));
+            //hobbiesWithIds.add(UTIL.hobbyNameExists(hobby.getName()));
         }
         return hobbiesWithIds;
     }

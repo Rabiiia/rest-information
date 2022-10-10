@@ -18,16 +18,16 @@ Content-Type: application/json
   "firstName": "Created",
   "lastName": "Person",
   "email": "new@mail.dk",
+  "address": {
+    "street": "Creative Street 1",
+    "zipcode": 2800
+  },
   "phones": [
     {
       "number": 34567890,
       "description": "Mobile (main)"
     }
-  ],
-  "address": {
-    "street": "Creative Street 1",
-    "zipcode": 2800
-  }
+  ]
 }
 
 ###
@@ -35,20 +35,28 @@ PUT http://localhost:8080/information/api/person
 Content-Type: application/json
 
 {
-  "id": 1,
+  "id": 5,
   "firstName": "Updated",
-  "lastName": "Person",
+  "lastName": "Person (again)",
   "email": "different@mail.dk",
+  "address": {
+    "street": "Progressive Street 2",
+    "zipcode": 2100
+  },
   "phones": [
     {
       "number": 98765432,
       "description": "Office"
     }
   ],
-  "address": {
-    "street": "Progressive Street 2",
-    "zipcode": 2100
-  }
+  "hobbies": [
+    {
+      "name": "Musik"
+    },
+    {
+      "name": "Fuglekiggeri"
+    }
+  ]
 }
 
 ###

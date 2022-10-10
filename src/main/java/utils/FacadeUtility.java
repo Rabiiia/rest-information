@@ -114,6 +114,9 @@ public class FacadeUtility {
      * @see TypedQuery
      */
     public Hobby hobbyNameExists(String name) throws EntityNotFoundException {
+        if (name == null) {
+            throw new EntityNotFoundException("Tried to find a hobby, but no name was specified.");
+        }
         EntityManager em = EMF.createEntityManager();
         TypedQuery<Hobby> hobbyQuery = em.createQuery("SELECT h FROM Hobby h WHERE h.name = :name", Hobby.class);
         hobbyQuery.setParameter("name", name);
